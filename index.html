@@ -917,7 +917,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
 
   /* ---------- response storage ---------- */
   var RESPONSE_STORE_KEY = "fy27q3-ts-qbr-responses-v1";
-  var APP_SCRIPT_URL = ""; // Paste the deployed Google Apps Script /exec URL here.
+  var APP_SCRIPT_URL = "https://script.google.com/a/macros/mongodb.com/s/AKfycbwkIp1Q_nHszA_9wLQZOHpmrqTEogTPKoykWrFeLawDclKSZ14AkmXaQLX9wNehr6VH/exec";
   var NA_TEXT = "Didn’t attend";
   var HEAD = ["Response ID", "Submitted at (UTC)", "Overall rating", "Logistics rating", "Pacing", "Topic mix"]
     .concat(AGREE.map(function (a) { return a.text; }))
@@ -950,7 +950,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
   async function readAllRows() {
     return readStoredResponses().map(toRow);
   }
-  function usesBackend() { return /^https:\/\/script\.google\.com\/macros\/s\//.test(APP_SCRIPT_URL); }
+  function usesBackend() { return /^https:\/\/script\.google\.com(?:\/a\/macros\/[^/]+)?\/s\//.test(APP_SCRIPT_URL); }
   async function postBackend(payload) {
     var response = await fetch(APP_SCRIPT_URL, {
       method: "POST",
