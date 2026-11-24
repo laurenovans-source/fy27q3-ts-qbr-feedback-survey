@@ -649,7 +649,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
 
   <section id="thanksView" class="thanks" hidden data-glean-id="thanks">
     <h2>Thanks for the feedback</h2>
-    <p>Your response was saved in this browser. The results page never shows names. To change your response, submit again from this device and your new response replaces the earlier one. Responses remain available in this browser until its site data is cleared.</p>
+    <p>Your response was saved. The results page never shows names. To change your response, submit again from this device and your new response replaces the earlier one.</p>
     <div class="tools">
       <button type="button" class="btn primary" id="editBtn">Edit my response</button>
       <button type="button" class="btn" id="newBtn">Start a new response</button>
@@ -915,8 +915,9 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
   function fmt(n) { return n === null ? "–" : n.toFixed(1); }
 
 
-  /* ---------- local browser response storage ---------- */
+  /* ---------- response storage ---------- */
   var RESPONSE_STORE_KEY = "fy27q3-ts-qbr-responses-v1";
+  var APP_SCRIPT_URL = ""; // Paste the deployed Google Apps Script /exec URL here.
   var NA_TEXT = "Didn’t attend";
   var HEAD = ["Response ID", "Submitted at (UTC)", "Overall rating", "Logistics rating", "Pacing", "Topic mix"]
     .concat(AGREE.map(function (a) { return a.text; }))
@@ -948,6 +949,23 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
   }
   async function readAllRows() {
     return readStoredResponses().map(toRow);
+  }
+  function usesBackend() { return /^https:\/\/script\.google\.com\/macros\/s\//.test(APP_SCRIPT_URL); }
+  async function postBackend(payload) {
+    var response = await fetch(APP_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+    var data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || "The response service rejected the request.");
+    return data;
+  }
+  async function fetchBackendSummary() {
+    var response = await fetch(APP_SCRIPT_URL + (APP_SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "action=results");
+    var data = await response.json();
+    if (!response.ok || !data.ok || !data.summary) throw new Error(data.error || "The response service did not return results.");
+    return data.summary;
   }
   function toRow(d) {
     function cell(v) { return v === undefined || v === null ? "" : v; }
@@ -1025,6 +1043,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     showBanner("Saving your response…");
     var p = cleanPayload(); p.id = editingId || newId();
     try {
+      if (usesBackend()) await postBackend({ action: "submit", response: p });
       saveStoredResponse(p);
       editingId = p.id; saveMine(p);
       showBanner("");
@@ -1053,14 +1072,19 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     state = blankState(); editingId = null; clearMine(); showBanner("");
     show("survey"); goTo(0);
   }
-  function deleteMyResponse() {
+  async function deleteMyResponse() {
     if (!editingId || !window.confirm("Delete your saved response from this browser? This cannot be undone.")) return;
-    localStorage.setItem(RESPONSE_STORE_KEY, JSON.stringify(readStoredResponses().filter(function (response) { return response.id !== editingId; })));
-    state = blankState(); editingId = null; clearMine(); liveSummary = null; liveTried = false;
-    show("survey"); goTo(0); showBanner("Your saved response was deleted from this browser.");
+    try {
+      if (usesBackend()) await postBackend({ action: "delete", id: editingId });
+      localStorage.setItem(RESPONSE_STORE_KEY, JSON.stringify(readStoredResponses().filter(function (response) { return response.id !== editingId; })));
+      state = blankState(); editingId = null; clearMine(); liveSummary = null; liveTried = false;
+      show("survey"); goTo(0); showBanner("Your saved response was deleted.");
+    } catch (e) {
+      showBanner("Your response wasn’t deleted. Error: " + errText(e), true);
+    }
   }
 
-  /* ---------- results (read from browser-local responses) ---------- */
+  /* ---------- results ---------- */
   /* ---------- results ---------- */
   var MIN_N = 2;
   var CHOICES = { pacing: ["Too short", "About right", "Too long"], mix: ["Too strategic", "About right", "Too operational"] };
@@ -1151,7 +1175,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
   function metaText(s) {
     var when = s && s.fetched_at ? new Date(s.fetched_at) : null;
     var whenTxt = liveSummary ? "checked just now" : (when && !isNaN(when) ? "updated " + when.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "not updated yet");
-    return s.count + " response" + (s.count === 1 ? "" : "s") + " · " + whenTxt + " in this browser";
+    return s.count + " response" + (s.count === 1 ? "" : "s") + " · " + whenTxt + (usesBackend() ? " from the responses folder in Google Drive" : " in this browser");
   }
   function statCard(id, value, label, citeKey) {
     var l = el("div", { class: "l" }, [document.createTextNode(label), citeKey ? cite(citeKey) : null]);
@@ -1179,7 +1203,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     w.appendChild(el("div", { class: "big", text: s.count + " of " + MIN_N }));
     var pr = el("div", { class: "progress", role: "img", "aria-label": s.count + " of " + MIN_N + " responses needed" });
     var fill = el("i"); fill.style.width = Math.min(100, s.count / MIN_N * 100) + "%"; pr.appendChild(fill); w.appendChild(pr);
-    w.appendChild(el("p", { text: MIN_N > 1 ? "The summary appears once at least " + MIN_N + " people respond, so no one’s answers can be singled out. Responses are stored only in this browser." : "No responses yet. The summary appears here as soon as the first person submits." }));
+    w.appendChild(el("p", { text: MIN_N > 1 ? "The summary appears once at least " + MIN_N + " people respond, so no one’s answers can be singled out." : "No responses yet. The summary appears here as soon as the first person submits." }));
     w.appendChild(el("p", { class: "q-label", text: "What the summary will show" }));
     var ul = el("ul");
     ["Response count, overall rating and logistics rating",
@@ -1260,13 +1284,13 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     var head = el("div", { class: "res-head" });
     head.appendChild(el("div", {}, [el("h2", { class: "step-title", text: "Results" }), el("p", { class: "res-meta", text: metaText(s) })]));
     var actions = el("div", { class: "tools res-actions" });
-    var check = el("button", { type: "button", class: "btn", text: liveState === "loading" ? "Checking…" : "Refresh local results" });
+    var check = el("button", { type: "button", class: "btn", text: liveState === "loading" ? "Checking…" : (usesBackend() ? "Check for new responses" : "Refresh local results") });
     if (liveState === "loading") check.disabled = true;
     check.addEventListener("click", function () { liveManual = true; checkLive(); });
     actions.appendChild(check);
     head.appendChild(actions);
     host.appendChild(head);
-    if (liveState === "failed" && liveManual) host.appendChild(el("p", { class: "tool-note", text: "Couldn’t read the locally saved responses. Showing the last available results." }));
+    if (liveState === "failed" && liveManual) host.appendChild(el("p", { class: "tool-note", text: "Couldn’t read the latest responses. Showing the last available results." }));
 
     if (s.count < MIN_N || !s.sessions) { renderResultsWaiting(host, s); return; }
     renderResultsSummary(host, s);
@@ -1279,8 +1303,9 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     if (liveState === "loading") return;
     liveState = "loading"; liveTried = true; renderResults();
     try {
-      var docs = latestPerResponse(await readAllRows());
-      liveSummary = summarize(docs); liveState = "ok";
+      if (usesBackend()) liveSummary = await fetchBackendSummary();
+      else liveSummary = summarize(latestPerResponse(await readAllRows()));
+      liveState = "ok";
     } catch (e) {
       console.warn("[QBR survey] live results check failed", e);
       liveState = "failed";
