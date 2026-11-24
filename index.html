@@ -629,7 +629,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     <h1 data-glean-id="survey-title">FY27Q3 Technical Services QBR</h1>
     <p data-glean-id="survey-intro">Share what worked well across the QBR and how we can make the next event better. It takes about five minutes.</p>
     <p class="meta" data-glean-id="survey-anonymity">This survey doesn’t ask for your name or email, and results never show who said what.</p>
-    <p class="meta">Results appear only after at least three responses, making it harder to connect feedback to any one person.</p>
+    <p class="meta">Results appear only after at least two responses, making it harder to connect feedback to any one person.</p>
     <p class="meta" data-glean-id="survey-meta">November 17–19, 2026 · Asbury Park, NJ</p>
   </div>
 </header>
@@ -1062,7 +1062,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
 
   /* ---------- results (read from browser-local responses) ---------- */
   /* ---------- results ---------- */
-  var MIN_N = 3;
+  var MIN_N = 2;
   var CHOICES = { pacing: ["Too short", "About right", "Too long"], mix: ["Too strategic", "About right", "Too operational"] };
   var SNAPSHOT = null;
   var liveSummary = null, liveState = "idle", liveManual = false, liveTried = false;
