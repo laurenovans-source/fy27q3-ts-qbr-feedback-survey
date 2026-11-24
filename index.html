@@ -652,8 +652,9 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     <div class="tools">
       <button type="button" class="btn primary" id="editBtn">Edit my response</button>
       <button type="button" class="btn" id="newBtn">Start a new response</button>
+      <button type="button" class="btn danger" id="deleteBtn">Delete my response</button>
     </div>
-    <p class="tool-note">Using a shared device? Choose “Start a new response” so the next person begins with a blank survey.</p>
+    <p class="tool-note">“Start a new response” keeps this response in the local results. “Delete my response” removes it from this browser.</p>
   </section>
 
   <section id="resultsView" class="results" hidden data-glean-id="results" data-skip-annotation></section>
@@ -1051,6 +1052,12 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
     state = blankState(); editingId = null; clearMine(); showBanner("");
     show("survey"); goTo(0);
   }
+  function deleteMyResponse() {
+    if (!editingId || !window.confirm("Delete your saved response from this browser? This cannot be undone.")) return;
+    localStorage.setItem(RESPONSE_STORE_KEY, JSON.stringify(readStoredResponses().filter(function (response) { return response.id !== editingId; })));
+    state = blankState(); editingId = null; clearMine(); liveSummary = null; liveTried = false;
+    show("survey"); goTo(0); showBanner("Your saved response was deleted from this browser.");
+  }
 
   /* ---------- results (read from browser-local responses) ---------- */
   /* ---------- results ---------- */
@@ -1289,6 +1296,7 @@ label.q-label small { font-weight: 400; color: var(--artifact-muted); }
   $("nextBtn").addEventListener("click", function () { if (step < STEPS.length - 1) goTo(step + 1); else submit(); });
   $("editBtn").addEventListener("click", function () { show("survey"); goTo(0); });
   $("newBtn").addEventListener("click", resetForNew);
+  $("deleteBtn").addEventListener("click", deleteMyResponse);
   $("viewToggle").addEventListener("click", function () { show(view === "results" ? "survey" : "results"); });
   function setGuide(open) { $("guide").hidden = !open; $("guideBtn").setAttribute("aria-expanded", open ? "true" : "false"); }
   $("guideBtn").addEventListener("click", function () { setGuide($("guide").hidden); });
