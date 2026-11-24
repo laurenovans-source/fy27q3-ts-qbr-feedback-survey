@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FY27Q3 Technical Services QBR: Session Feedback</title>
+<style>
+:root {
+  --artifact-slate: #001E2B; --artifact-evergreen: #023430; --artifact-spring: #00ED64;
+  --artifact-spring-hover: #00D65A; --artifact-forest: #00684A; --artifact-offwhite: #FAFBFC;
+  --artifact-hero-muted: #A9BDC4; --artifact-shadow: rgba(0, 0, 0, .35);
+  --artifact-bg: #FAFBFC; --artifact-surface: #FFFFFF; --artifact-text: #001E2B; --artifact-muted: #3D5A66;
+  --artifact-line: #001E2B; --artifact-soft-line: #C5D0D5; --artifact-accent-text: #00684A; --artifact-err: #B3261E;
+  --artifact-on-spring: #001E2B;
+  --artifact-font: "Helvetica Neue", Arial, system-ui, sans-serif;
+  --artifact-display: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", Arial, sans-serif;
+  --artifact-mono: ui-monospace, Menlo, Consolas, monospace;
+}
+html[data-theme='dark'] {
+  --artifact-bg: #001E2B; --artifact-surface: #023430; --artifact-text: #FAFBFC; --artifact-muted: #A9BDC4;
+  --artifact-line: #00ED64; --artifact-soft-line: #1E4A4F; --artifact-accent-text: #00ED64; --artifact-err: #FF8A80;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--artifact-bg); color: var(--artifact-text); font-family: var(--artifact-font); font-size: 16px; line-height: 1.5; }
+button, select, textarea, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--artifact-spring); outline-offset: 2px; }
+
+.hero { background: var(--artifact-slate); color: var(--artifact-offwhite); border-bottom: 6px solid var(--artifact-spring); }
+.hero-inner { max-width: 1100px; margin: 0 auto; padding: 28px 24px 30px; position: relative; }
+.hero-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.hero-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.logo { height: 34px; width: auto; display: block; }
+.hero h1 { font-family: var(--artifact-display); font-weight: 700; color: var(--artifact-spring); font-size: clamp(2.1rem, 7vw, 3.6rem); line-height: 1; letter-spacing: -.01em; text-transform: uppercase; margin: 28px 0 12px; }
+.hero p { margin: 0; color: var(--artifact-offwhite); }
+.hero .meta { margin-top: 10px; color: var(--artifact-hero-muted); font-size: .95rem; }
+.view-toggle { background: transparent; color: var(--artifact-spring); border: 1px solid var(--artifact-spring); padding: 8px 14px; cursor: pointer; font-weight: 600; }
+.view-toggle:hover { background: var(--artifact-spring); color: var(--artifact-on-spring); }
+.guide { position: absolute; right: 24px; top: 76px; z-index: 20; width: min(360px, calc(100% - 48px)); background: var(--artifact-slate); color: var(--artifact-offwhite); border: 1px solid var(--artifact-spring); padding: 16px 18px; box-shadow: 0 8px 24px var(--artifact-shadow); }
+.guide h2 { font-family: var(--artifact-display); font-weight: 700; text-transform: uppercase; color: var(--artifact-spring); font-size: 1.4rem; margin: 0 0 6px; }
+.guide .gh { margin: 12px 0 4px; font-weight: 600; font-size: .9rem; color: var(--artifact-hero-muted); }
+.guide dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; }
+.guide dt { font-weight: 600; color: var(--artifact-spring); }
+.guide dd { margin: 0; }
+
+main { max-width: 1100px; margin: 0 auto; padding: 24px 24px 64px; }
+.day-sum { border: 1px solid var(--artifact-line); background: var(--artifact-surface); color: var(--artifact-text); padding: 14px 18px; margin: 0 0 20px; }
+.day-sum dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+.day-sum .pair { min-width: 0; }
+.day-sum dt { font-weight: 600; font-size: .9rem; color: var(--artifact-accent-text); margin-top: 8px; }
+.day-sum dt { margin-top: 0; }
+.day-sum dd { margin: 2px 0 0; }
+
+.steps { display: flex; margin: 0 0 28px; padding: 0; list-style: none; border: 1px solid var(--artifact-line); }
+.steps li { flex: 1; }
+.steps button { width: 100%; background: transparent; border: 0; border-right: 1px solid var(--artifact-line); padding: 10px 6px; cursor: pointer; font-weight: 600; font-size: .92rem; color: var(--artifact-text); }
+.steps li:last-child button { border-right: 0; }
+.steps button[aria-current="step"] { background: var(--artifact-spring); color: var(--artifact-on-spring); }
+.steps button .done { color: var(--artifact-accent-text); }
+
+h2.step-title { font-family: var(--artifact-display); font-weight: 700; text-transform: uppercase; font-size: clamp(1.6rem, 5vw, 2.3rem); line-height: 1.05; margin: 0 0 6px; }
+.step-help { color: var(--artifact-muted); margin: 0 0 22px; }
+.scale-key { display: flex; justify-content: space-between; color: var(--artifact-muted); font-size: .9rem; margin: 0 0 8px; max-width: 420px; }
+
+.q { border: 1px solid var(--artifact-soft-line); background: var(--artifact-surface); color: var(--artifact-text); padding: 16px 18px; margin: 0 0 12px; min-width: 0; }
+.q legend, .q .q-label { padding: 0; font-weight: 600; display: block; margin-bottom: 4px; }
+.q .owners { color: var(--artifact-muted); font-size: .92rem; margin: 0 0 12px; }
+.q.invalid { border-color: var(--artifact-err); }
+.err { color: var(--artifact-err); font-size: .92rem; margin: 8px 0 0; }
+
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg span { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; min-height: 44px; padding: 6px 14px; border: 1px solid var(--artifact-line); background: transparent; color: var(--artifact-text); font-weight: 600; }
+.seg label.wide span { padding: 6px 16px; font-weight: 500; }
+.seg input:checked + span { background: var(--artifact-spring); color: var(--artifact-on-spring); border-color: var(--artifact-slate); }
+.seg input:focus-visible + span { outline: 3px solid var(--artifact-spring); outline-offset: 2px; }
+.seg input:not(:checked) + span:hover { background: color-mix(in srgb, var(--artifact-spring) 22%, transparent); }
+.seg .na span { border-style: dashed; font-weight: 500; color: var(--artifact-muted); }
+.seg .na input:checked + span { color: var(--artifact-on-spring); border-style: solid; }
+
+.about { margin: 0 0 14px; padding: 2px 0 2px 12px; border-left: 4px solid var(--artifact-spring); }
+.about summary { cursor: pointer; font-weight: 600; color: var(--artifact-accent-text); min-height: 28px; }
+.about dl { margin: 8px 0 4px; }
+.about dt { font-weight: 600; font-size: .9rem; margin-top: 8px; }
+.about dd { margin: 2px 0 0; color: var(--artifact-muted); }
+.sc-label { display: block; margin-top: 14px; font-size: .92rem; color: var(--artifact-muted); }
+select, textarea { width: 100%; max-width: 100%; background: var(--artifact-surface); color: var(--artifact-text); border: 1px solid var(--artifact-line); padding: 10px 12px; border-radius: 0; margin-top: 8px; }
+select { appearance: auto; min-height: 44px; }
+textarea { min-height: 96px; resize: vertical; }
+label.q-label small { font-weight: 400; color: var(--artifact-muted); }
+
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 28px; }
+.btn { min-height: 46px; padding: 10px 22px; cursor: pointer; font-weight: 600; border: 1px solid var(--artifact-line); background: transparent; color: var(--artifact-text); }
+.btn:hover { background: color-mix(in srgb, var(--artifact-spring) 22%, transparent); }
+.btn.primary { background: var(--artifact-spring); color: var(--artifact-on-spring); border-color: var(--artifact-slate); }
+.btn.primary:hover { background: var(--artifact-spring-hover); }
+.btn.danger { border-color: var(--artifact-err); color: var(--artifact-err); }
+.btn[disabled] { opacity: .55; cursor: default; }
+.progress-note { color: var(--artifact-muted); font-size: .92rem; }
+
+.banner { border: 1px solid var(--artifact-forest); border-left-width: 6px; background: var(--artifact-surface); color: var(--artifact-text); padding: 12px 16px; margin: 0 0 20px; }
+.banner.warn { border-color: var(--artifact-err); }
+
+.thanks { padding: 24px 0; }
+.thanks h2 { font-family: var(--artifact-display); font-weight: 700; text-transform: uppercase; font-size: clamp(2rem, 6vw, 3rem); margin: 0 0 8px; }
+.thanks .tools { margin-top: 20px; }
+
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 0 0 24px; }
+.stat { border: 1px solid var(--artifact-line); padding: 14px 16px; background: var(--artifact-surface); color: var(--artifact-text); }
+.stat .n { font-family: var(--artifact-display); font-weight: 700; font-size: 2.5rem; line-height: 1; }
+.stat .l { color: var(--artifact-muted); font-size: .92rem; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) 64px; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--artifact-soft-line); }
+.bar-row .t { font-weight: 600; }
+.bar-row .o { color: var(--artifact-muted); font-size: .88rem; font-weight: 400; }
+.bar { height: 14px; border: 1px solid var(--artifact-line); background: transparent; }
+.bar i { display: block; height: 100%; background: var(--artifact-spring); }
+.avg { font-family: var(--artifact-mono); font-size: .95rem; text-align: right; }
+.sub { color: var(--artifact-muted); font-size: .85rem; grid-column: 1 / -1; margin-top: -6px; }
+.results h3 { font-family: var(--artifact-display); font-weight: 700; text-transform: uppercase; font-size: 1.5rem; margin: 30px 0 8px; }
+.comment { border-left: 4px solid var(--artifact-spring); padding: 6px 12px; margin: 8px 0; background: var(--artifact-surface); color: var(--artifact-text); white-space: pre-wrap; overflow-wrap: anywhere; }
+.tools { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 12px; }
+.tool-note { color: var(--artifact-muted); font-size: .9rem; margin: 0 0 20px; }
+.file-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+[hidden] { display: none !important; }
+@media screen and (max-width: 720px) {
+  .day-sum dl { grid-template-columns: 1fr; gap: 10px; }
+}
+@media screen and (max-width: 560px) {
+  .bar-row { grid-template-columns: 1fr 56px; }
+  .bar-row .bar { grid-column: 1 / -1; grid-row: 2; }
+  .steps button { font-size: .8rem; padding: 10px 2px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .seg span, .btn, .view-toggle { transition: background-color .12s ease; }
+}
+@media print {
+  @page { size: auto !important; }
+  body { margin: 0; padding: 0.4in 0.6in; background: #fff; color: #001E2B; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  main, .hero-inner { max-width: 100% !important; width: 100% !important; }
+  .hero { background: #001E2B !important; }
+  .guide { display: none !important; }
+  section, .q, .stat, .bar-row { break-inside: avoid; }
+  .comment { break-inside: avoid; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  button, [role="button"], .nav, .tools { display: none !important; }
+  @page { size: auto !important; }
+}
+
+.btn.linkish { display: inline-flex; align-items: center; text-decoration: none; }
+.skel { height: 14px; background: var(--artifact-soft-line); margin: 10px 0; opacity: .6; }
+.skel.w60 { width: 60%; } .skel.w80 { width: 80%; } .skel.w40 { width: 40%; }
+
+.banner p { margin: 0 0 10px; }
+
+/* results summary */
+.res-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin: 0 0 18px; }
+.res-head .step-title { margin: 0; }
+.res-meta { color: var(--artifact-muted); font-size: .92rem; margin: 6px 0 0; }
+.res-actions { margin: 0; }
+.results h3 { display: flex; align-items: center; gap: 8px; }
+.summary { border: 1px solid var(--artifact-line); background: var(--artifact-surface); color: var(--artifact-text); padding: 18px 20px; margin: 0 0 8px; }
+.summary h3 { margin-top: 0; }
+.summary .stat-row { margin: 0 0 18px; }
+.summary .stat { border-color: var(--artifact-soft-line); background: var(--artifact-bg); color: var(--artifact-text); }
+.stat .l { display: flex; align-items: center; gap: 6px; }
+.takeaways { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.takeaways li { padding: 8px 12px; border-left: 4px solid var(--artifact-spring); background: var(--artifact-bg); color: var(--artifact-text); }
+.takeaways b { font-weight: 600; }
+.day-group { margin: 0 0 18px; }
+.day-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; padding: 8px 0 6px; border-bottom: 2px solid var(--artifact-line); }
+.day-name { font-family: var(--artifact-display); font-weight: 700; text-transform: uppercase; font-size: 1.15rem; color: var(--artifact-accent-text); }
+.day-title { color: var(--artifact-muted); font-size: .95rem; }
+.sess-comments { grid-column: 1 / -1; margin: -2px 0 2px; }
+.sess-comments summary { cursor: pointer; color: var(--artifact-accent-text); font-weight: 600; font-size: .9rem; min-height: 28px; }
+.dist-row { padding: 12px 0; border-bottom: 1px solid var(--artifact-soft-line); }
+.dist-row .t { font-weight: 600; margin: 0 0 8px; }
+.dist { display: flex; height: 16px; border: 1px solid var(--artifact-line); }
+.dist i { display: block; height: 100%; }
+.dist i.s0 { background: color-mix(in srgb, var(--artifact-spring) 35%, transparent); }
+.dist i.s1 { background: var(--artifact-spring); }
+.dist i.s2 { background: color-mix(in srgb, var(--artifact-forest) 70%, transparent); }
+.dist-legend { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; color: var(--artifact-muted); font-size: .9rem; }
+.dist-legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; border: 1px solid var(--artifact-line); }
+.dist-legend .s0::before { background: color-mix(in srgb, var(--artifact-spring) 35%, transparent); }
+.dist-legend .s1::before { background: var(--artifact-spring); }
+.dist-legend .s2::before { background: color-mix(in srgb, var(--artifact-forest) 70%, transparent); }
+.c-block { margin: 0 0 18px; }
+.c-block .q-label { margin: 0 0 4px; }
+.c-empty { color: var(--artifact-muted); font-size: .92rem; margin: 2px 0 0; }
+.waiting { border: 1px solid var(--artifact-line); background: var(--artifact-surface); color: var(--artifact-text); padding: 22px 22px 20px; }
+.waiting h3 { margin: 0 0 6px; }
+.waiting .big { font-family: var(--artifact-display); font-weight: 700; font-size: 2.6rem; line-height: 1; margin: 8px 0 10px; }
+.progress { height: 12px; border: 1px solid var(--artifact-line); max-width: 420px; margin: 0 0 14px; }
+.progress i { display: block; height: 100%; background: var(--artifact-spring); }
+.waiting ul { margin: 8px 0 0; padding-left: 20px; color: var(--artifact-muted); }
+.waiting li { margin: 4px 0; }
+.anon-note { margin-top: 26px; }
+</style>
+<script>
+  window.APP_DATA = {"summary": {"count": 1, "min_n": 1, "fetched_at": "2026-11-24T00:55:59.122909+00:00", "overall": {"n": 1, "avg": 4.0, "top2": 1.0}, "logistics": {"n": 1, "avg": 4.0, "top2": 1.0}, "sessions": {"s01": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s02": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s03": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s04": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s05": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s06": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s07": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s08": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s09": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s10": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s11": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s12": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s13": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s14": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s15": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s16": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s17": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s18": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}, "s19": {"n": 1, "avg": 5.0, "top2": 1.0, "na": 0, "comments": []}}, "agree": {"alignedQ4": {"n": 1, "avg": 5.0, "top2": 1.0}, "discussionTime": {"n": 1, "avg": 4.0, "top2": 1.0}, "prereads": {"n": 1, "avg": 3.0, "top2": 0.0}}, "pacing": {"n": 1, "counts": {"About right": 1}}, "mix": {"n": 1, "counts": {"About right": 1}}, "overall_comments": [], "comments": {"mostValuable": [], "leastValuable": [], "q4Followups": [], "nextTopics": [], "other": []}}, "metadata": {"folder_url": "https://drive.google.com/drive/folders/1BwWg0lpKpzUlCwg0bWnENhJJreL-adpL", "app_dir": "/home/user/output/FY27Q3 TS QBR Feedback Survey"}, "_artifact_refresh": {"completed_at_utc": "2026-11-24T00:55:59.123115+00:00"}, "citations": {"__refresh_data_py__": {"kind": "code", "code": "\"\"\"Read the QBR responses folder (one file per response) and build the anonymous results summary the survey page opens with.\"\"\"\nimport asyncio\nimport base64\nimport contextlib\nimport io\nimport json\nimport os\nimport random\nimport re\nfrom datetime import datetime, timezone\nfrom pathlib import Path\n\nfrom tool_sdk import google_drive_mcp__download_file_content as drive_download\nfrom tool_sdk import google_drive_mcp__search_files as drive_search\n\nwith contextlib.redirect_stdout(io.StringIO()):\n    help(drive_search)  # loads the Drive tools' argument definitions\n    help(drive_download)\n\nAPP_DIR = Path(__file__).parent\nFOLDER_ID = \"1BwWg0lpKpzUlCwg0bWnENhJJreL-adpL\"\nFOLDER_URL = f\"https://drive.google.com/drive/folders/{FOLDER_ID}\"\nFILE_PREFIX = \"QBR response \"\nGOAL = \"Refresh the QBR survey results summary\"\nMIN_N = 1  # anonymity threshold: hide any statistic with fewer answers than this\nNA_PATTERN = re.compile(r\"^(didn.t attend|na)$\", re.I)\n\n\ndef survey_definitions() -> tuple[list[str], list[str], list[str]]:\n    \"\"\"Read session, agreement and comment question IDs, in column order, from the survey page.\"\"\"\n    tmpl = (APP_DIR / \"template.html.tmpl\").read_text(encoding=\"utf-8\")\n    sessions = re.findall(r'\\{ id: \"(s\\d\\d)\", day: \\d', tmpl)\n    agree_block = tmpl[tmpl.index(\"var AGREE = [\"):tmpl.index(\"var AGREE_LABELS\")]\n    comment_block = tmpl[tmpl.index(\"var COMMENTS = [\"):tmpl.index(\"var STEPS\")]\n    agree = re.findall(r'\\{ id: \"(\\w+)\", text:', agree_block)\n    comments = re.findall(r'\\{ id: \"(\\w+)\", text:', comment_block)\n    if not (sessions and agree and comments):\n        raise ValueError(\"Could not read the survey questions from the page.\")\n    return sessions, agree, comments\n\n\ndef tool_json(result) -> dict:\n    \"\"\"Unwrap a Drive tool response into its JSON payload, failing loudly on errors.\"\"\"\n    raw = result\n    if isinstance(raw, list) and raw:\n        raw = raw[0]\n    if isinstance(raw, str):\n        raw = json.loads(raw)\n    content = raw.get(\"content\") if isinstance(raw, dict) else None\n    if isinstance(content, list) and content and isinstance(content[0], dict) and \"text\" in content[0]:\n        raw = json.loads(content[0][\"text\"])\n    elif isinstance(content, dict) and \"text\" in content:\n        raw = json.loads(content[\"text\"])\n    if raw.get(\"successful\") is False or raw.get(\"successfull\") is False or raw.get(\"error\"):\n        raise RuntimeError(f\"Google Drive request failed: {raw.get('error')}\")\n    return raw\n\n\nasync def list_response_files() -> list:\n    files, token = [], None\n    for _ in range(10):\n        kwargs = {\"pageToken\": token} if token else {}\n        data = tool_json(await drive_search(\n            _user_goal=GOAL, query=f\"parentId = '{FOLDER_ID}' and trashed = false\", pageSize=100,\n            excludeContentSnippets=True, internal_preview_markdown=\"### FY27Q3 TS QBR Feedback Responses\",\n            internal_preview_description_brief=\"QBR responses\", **kwargs))\n        batch = data.get(\"files\", [])\n        files += [f for f in batch if str(f.get(\"title\", \"\")).startswith(FILE_PREFIX)]\n        token = data.get(\"nextPageToken\") or data.get(\"next_page_token\")\n        if not token or not batch:\n            break\n    return files\n\n\nasync def read_rows() -> list:\n    \"\"\"Return every response row, oldest file first, so later edits win.\"\"\"\n    files = sorted(await list_response_files(), key=lambda f: f.get(\"createdTime\", \"\"))\n    results = await asyncio.gather(*[\n        drive_download(_user_goal=GOAL, fileId=f[\"id\"], internal_preview_markdown=\"### \" + f[\"title\"],\n                       internal_preview_description_brief=\"QBR response\")\n        for f in files])\n    rows = []\n    for f, res in zip(files, results):\n        doc = json.loads(base64.b64decode(tool_json(res)[\"content\"]).decode(\"utf-8\"))\n        if not isinstance(doc.get(\"row\"), list):\n            raise ValueError(f\"Unexpected response file format: {f['title']}\")\n        rows.append(doc[\"row\"])\n    return rows\n\n\ndef num(v):\n    \"\"\"Return a 1 to 5 rating as a number, or None when blank or invalid.\"\"\"\n    try:\n        n = float(v)\n    except (TypeError, ValueError):\n        return None\n    return n if 1 <= n <= 5 else None\n\n\ndef text(v) -> str:\n    return \"\" if v is None else str(v).strip()\n\n\ndef score(vals: list) -> dict:\n    \"\"\"Average and share of 4 to 5 ratings, hidden below the anonymity threshold.\"\"\"\n    ok = len(vals) >= MIN_N\n    return {\n        \"n\": len(vals),\n        \"avg\": round(sum(vals) / len(vals), 2) if ok else None,\n        \"top2\": round(sum(1 for v in vals if v >= 4) / len(vals), 2) if ok else None,\n    }\n\n\ndef choice(docs: list, key: str) -> dict:\n    counts: dict = {}\n    for d in docs:\n        if d[key]:\n            counts[d[key]] = counts.get(d[key], 0) + 1\n    n = sum(counts.values())\n    return {\"n\": n, \"counts\": counts if n >= MIN_N else None}\n\n\ndef shuffled(items: list) -> list:\n    out = list(items)\n    random.shuffle(out)\n    return out\n\n\nasync def build_summary() -> dict:\n    sessions, agree, comments = survey_definitions()\n    # --- citation_start [folder_responses] ---\n    # Read every response file from the shared responses folder in Google Drive.\n    # Files are read oldest first, so the last file for a Response ID is that person's latest (edited) response.\n    rows = await read_rows()\n    latest: dict = {}\n    for r in rows:\n        if not r or text(r[0]) in (\"\", \"Response ID\"):\n            continue\n        r = list(r) + [\"\"] * (60 - len(r))\n        i = 0\n        d = {\"id\": text(r[i])}; i += 1\n        i += 1  # submission date is not used, to keep results anonymous\n        d[\"overall\"] = num(r[i]); i += 1\n        d[\"logistics\"] = num(r[i]); i += 1\n        d[\"pacing\"] = text(r[i]); i += 1\n        d[\"mix\"] = text(r[i]); i += 1\n        d[\"agree\"] = {}\n        for a in agree:\n            d[\"agree\"][a] = num(r[i]); i += 1\n        d[\"ratings\"] = {}\n        for s in sessions:\n            v = r[i]; i += 1\n            d[\"ratings\"][s] = \"na\" if NA_PATTERN.match(text(v)) else num(v)\n        d[\"session_comments\"] = {}\n        for s in sessions:\n            d[\"session_comments\"][s] = text(r[i]); i += 1\n        d[\"overall_comment\"] = text(r[i]); i += 1\n        d[\"comments\"] = {}\n        for c in comments:\n            d[\"comments\"][c] = text(r[i]); i += 1\n        latest.pop(d[\"id\"], None)\n        latest[d[\"id\"]] = d\n    docs = list(latest.values())\n    # --- citation_end [folder_responses] ---\n\n    summary = {\"count\": len(docs), \"min_n\": MIN_N, \"fetched_at\": datetime.now(timezone.utc).isoformat()}\n    if len(docs) < MIN_N:\n        return summary\n\n    # --- citation_start [response_summary] ---\n    # Overall and logistics ratings: average and share rating 4 or 5, blank answers excluded.\n    summary[\"overall\"] = score([d[\"overall\"] for d in docs if d[\"overall\"] is not None])\n    summary[\"logistics\"] = score([d[\"logistics\"] for d in docs if d[\"logistics\"] is not None])\n    # --- citation_end [response_summary] ---\n\n    # --- citation_start [session_ratings] ---\n    # Session averages exclude \"Didn't attend\"; those are counted separately.\n    summary[\"sessions\"] = {}\n    for s in sessions:\n        vals = [d[\"ratings\"][s] for d in docs if isinstance(d[\"ratings\"][s], float)]\n        sc = score(vals)\n        sc[\"na\"] = sum(1 for d in docs if d[\"ratings\"][s] == \"na\")\n        sc[\"comments\"] = shuffled([d[\"session_comments\"][s] for d in docs if d[\"session_comments\"][s]])\n        summary[\"sessions\"][s] = sc\n    # --- citation_end [session_ratings] ---\n\n    # --- citation_start [overall_questions] ---\n    # Agreement questions use 1 (strongly disagree) to 5 (strongly agree).\n    summary[\"agree\"] = {a: score([d[\"agree\"][a] for d in docs if d[\"agree\"][a] is not None]) for a in agree}\n    summary[\"pacing\"] = choice(docs, \"pacing\")\n    summary[\"mix\"] = choice(docs, \"mix\")\n    # --- citation_end [overall_questions] ---\n\n    # --- citation_start [comments_anonymized] ---\n    # Comments are shuffled within each question so they can't be linked across questions.\n    summary[\"overall_comments\"] = shuffled([d[\"overall_comment\"] for d in docs if d[\"overall_comment\"]])\n    summary[\"comments\"] = {c: shuffled([d[\"comments\"][c] for d in docs if d[\"comments\"][c]]) for c in comments}\n    # --- citation_end [comments_anonymized] ---\n    return summary\n\n\nasync def main() -> None:\n    summary = await build_summary()\n    data = {\n        \"summary\": summary,\n        \"metadata\": {\"folder_url\": FOLDER_URL, \"app_dir\": str(APP_DIR)},\n        \"text_citations\": {\n            \"folder_source\": {\"explanation\": f\"All results come from the response files in the [FY27Q3 TS QBR Feedback Responses]({FOLDER_URL}) folder in Google Drive.\"}\n        },\n        \"_artifact_refresh\": {\"completed_at_utc\": datetime.now(timezone.utc).isoformat(timespec=\"microseconds\")},\n    }\n    tmp = APP_DIR / \"data.json.tmp\"\n    tmp.write_text(json.dumps(data), encoding=\"utf-8\")\n    os.replace(tmp, APP_DIR / \"data.json\")\n    print(json.dumps({\"responses\": summary[\"count\"], \"summary_shown\": \"sessions\" in summary}))\n\n\nasyncio.run(main())\n", "language": "python", "start_line": 1, "end_line": 218}, "folder_responses": {"kind": "code", "code": "    # Read every response file from the shared responses folder in Google Drive.\n    # Files are read oldest first, so the last file for a Response ID is that person's latest (edited) response.\n    rows = await read_rows()\n    latest: dict = {}\n    for r in rows:\n        if not r or text(r[0]) in (\"\", \"Response ID\"):\n            continue\n        r = list(r) + [\"\"] * (60 - len(r))\n        i = 0\n        d = {\"id\": text(r[i])}; i += 1\n        i += 1  # submission date is not used, to keep results anonymous\n        d[\"overall\"] = num(r[i]); i += 1\n        d[\"logistics\"] = num(r[i]); i += 1\n        d[\"pacing\"] = text(r[i]); i += 1\n        d[\"mix\"] = text(r[i]); i += 1\n        d[\"agree\"] = {}\n        for a in agree:\n            d[\"agree\"][a] = num(r[i]); i += 1\n        d[\"ratings\"] = {}\n        for s in sessions:\n            v = r[i]; i += 1\n            d[\"ratings\"][s] = \"na\" if NA_PATTERN.match(text(v)) else num(v)\n        d[\"session_comments\"] = {}\n        for s in sessions:\n            d[\"session_comments\"][s] = text(r[i]); i += 1\n        d[\"overall_comment\"] = text(r[i]); i += 1\n        d[\"comments\"] = {}\n        for c in comments:\n            d[\"comments\"][c] = text(r[i]); i += 1\n        latest.pop(d[\"id\"], None)\n        latest[d[\"id\"]] = d\n    docs = list(latest.values())", "language": "python", "start_line": 132, "end_line": 163}, "response_summary": {"kind": "code", "code": "    # Overall and logistics ratings: average and share rating 4 or 5, blank answers excluded.\n    summary[\"overall\"] = score([d[\"overall\"] for d in docs if d[\"overall\"] is not None])\n    summary[\"logistics\"] = score([d[\"logistics\"] for d in docs if d[\"logistics\"] is not None])", "language": "python", "start_line": 171, "end_line": 173}, "session_ratings": {"kind": "code", "code": "    # Session averages exclude \"Didn't attend\"; those are counted separately.\n    summary[\"sessions\"] = {}\n    for s in sessions:\n        vals = [d[\"ratings\"][s] for d in docs if isinstance(d[\"ratings\"][s], float)]\n        sc = score(vals)\n        sc[\"na\"] = sum(1 for d in docs if d[\"ratings\"][s] == \"na\")\n        sc[\"comments\"] = shuffled([d[\"session_comments\"][s] for d in docs if d[\"session_comments\"][s]])\n        summary[\"sessions\"][s] = sc", "language": "python", "start_line": 177, "end_line": 184}, "overall_questions": {"kind": "code", "code": "    # Agreement questions use 1 (strongly disagree) to 5 (strongly agree).\n    summary[\"agree\"] = {a: score([d[\"agree\"][a] for d in docs if d[\"agree\"][a] is not None]) for a in agree}\n    summary[\"pacing\"] = choice(docs, \"pacing\")\n    summary[\"mix\"] = choice(docs, \"mix\")", "language": "python", "start_line": 188, "end_line": 191}, "comments_anonymized": {"kind": "code", "code": "    # Comments are shuffled within each question so they can't be linked across questions.\n    summary[\"overall_comments\"] = shuffled([d[\"overall_comment\"] for d in docs if d[\"overall_comment\"]])\n    summary[\"comments\"] = {c: shuffled([d[\"comments\"][c] for d in docs if d[\"comments\"][c]]) for c in comments}", "language": "python", "start_line": 195, "end_line": 197}, "folder_source": {"kind": "text", "explanation": "All results come from the response files in the [FY27Q3 TS QBR Feedback Responses](https://drive.google.com/drive/folders/1BwWg0lpKpzUlCwg0bWnENhJJreL-adpL) folder in Google Drive.", "language": "text"}}};
+</script>
+
+<style data-live-web-app-citations>
+  .citation-python-code {
+    box-sizing: border-box;
+    max-width: 100%;
+    margin: 0;
+    padding: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #e5e7eb;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: normal;
+  }
+  .citation-python-code code {
+    display: grid;
+    gap: 0;
+    min-width: 0;
+    font: inherit;
+  }
+  .citation-code-line {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    min-width: 0;
+  }
+  .citation-code-line-number {
+    padding-right: 12px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: inherit;
+    text-align: right;
+    user-select: none;
+  }
+  .citation-code-line-source {
+    min-width: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .citation-token-comment { color: #94a3b8; }
+  .citation-token-keyword { color: #93c5fd; font-weight: 600; }
+  .citation-token-number { color: #fbbf24; }
+  .citation-token-string { color: #86efac; }
+  .glean-citation {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: baseline;
+    box-sizing: border-box;
+    min-width: 18px;
+    height: 18px;
+    margin: 0 1px;
+    padding: 0 5px;
+    border: 1px solid var(--theme-border-light, #e5e5e5);
+    border-radius: 9px;
+    background: var(--theme-background-light, #f6f6f6);
+    color: var(--theme-text-secondary, #727272);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .glean-citation:hover {
+    background: var(--theme-background-mid, #f0f0f0);
+    color: var(--theme-text-primary, #1b1b1b);
+  }
+  .glean-citation:focus-visible {
+    outline: 2px solid var(--theme-primary-brand, #343ced);
+    outline-offset: 1px;
+  }
+  .glean-citation-popover {
+    position: absolute;
+    z-index: 2147483647;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    width: min(500px, calc(100vw - 32px));
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 16px);
+    overflow: auto;
+    background: var(--theme-background, #ffffff);
+    border: 1px solid var(--theme-border-dark, #cccccc);
+    border-radius: 12px;
+    box-shadow: 0 4px 7px rgba(0, 0, 0, 0.25);
+    color: var(--theme-text-primary, #1b1b1b);
+    font-family: ui-sans-serif, system-ui, -apple-system, "SF Pro Text", "Segoe UI", sans-serif;
+  }
+  .glean-citation-popover[hidden] {
+    display: none;
+  }
+  .glean-citation-content {
+    box-sizing: border-box;
+    min-width: 0;
+    padding: 20px 20px 8px;
+  }
+  .glean-citation-content:last-child {
+    padding-bottom: 20px;
+  }
+  .glean-citation-text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: -0.125px;
+    color: var(--theme-text-primary, #1b1b1b);
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .glean-citation-text a {
+    color: var(--theme-primary-brand, #343ced);
+  }
+  .glean-citation-popover .citation-python-code {
+    max-height: 320px;
+    overflow: auto;
+  }
+  .glean-citation-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-sizing: border-box;
+    padding: 0 20px 12px;
+  }
+  .glean-citation-toggle {
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--theme-border-light, #e5e5e5);
+    border-radius: 8px;
+    background: var(--theme-background, #ffffff);
+    color: var(--theme-text-primary, #1b1b1b);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .glean-citation-toggle:hover {
+    background: var(--theme-background-light, #f6f6f6);
+  }
+  .glean-citation-segmented {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    box-sizing: border-box;
+    height: 34px;
+    padding: 0 4px;
+    background: var(--theme-background-light, #f6f6f6);
+    border: 1px solid var(--theme-border-light, #e5e5e5);
+    border-radius: 12px;
+  }
+  .glean-citation-segment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--theme-text-secondary, #727272);
+    cursor: pointer;
+  }
+  .glean-citation-segment[aria-selected="true"] {
+    background: var(--theme-background, #ffffff);
+    color: var(--theme-text-primary, #1b1b1b);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  }
+  .glean-citation-segment svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+  @media print {
+    .glean-citation,
+    .glean-citation-popover { display: none !important; }
+  }
+</style>
+<script data-live-web-app-citations>
+  (function() {
+    var tokenPattern = /(?:\"\"\"[\s\S]*?\"\"\"|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#[^\n]*|\b(?:False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b|\b\d+(?:\.\d+)?\b)/g;
+    var keywordPattern = /^(?:False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)$/;
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, function(ch) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+      });
+    }
+
+    function tokenClass(token) {
+      if (token.charAt(0) === '#') return 'citation-token-comment';
+      if (keywordPattern.test(token)) return 'citation-token-keyword';
+      if (/^\d/.test(token)) return 'citation-token-number';
+      return 'citation-token-string';
+    }
+
+    function highlightPython(code) {
+      var source = String(code || '');
+      var output = '';
+      var lastIndex = 0;
+      source.replace(tokenPattern, function(token, offset) {
+        output += escapeHtml(source.slice(lastIndex, offset));
+        output += '<span class="' + tokenClass(token) + '">' + escapeHtml(token) + '</span>';
+        lastIndex = offset + token.length;
+        return token;
+      });
+      return output + escapeHtml(source.slice(lastIndex));
+    }
+
+    function renderPythonCode(code, startLine) {
+      var lines = String(code || '').split('\n');
+      var parsedStartLine = Number(startLine);
+      var firstLine = Number.isFinite(parsedStartLine) && parsedStartLine > 0 ? parsedStartLine : 1;
+      var renderedLines = lines.map(function(line, index) {
+        return '<span class="citation-code-line">' +
+          '<span class="citation-code-line-number">' + (firstLine + index) + '</span>' +
+          '<span class="citation-code-line-source">' + highlightPython(line) + '</span>' +
+          '</span>';
+      }).join('');
+      return '<pre class="citation-python-code"><code class="language-python">' +
+        renderedLines +
+        '</code></pre>';
+    }
+
+    function getFullCode() {
+      var citations = (window.APP_DATA && window.APP_DATA.citations) || {};
+      return citations.__refresh_data_py__ && citations.__refresh_data_py__.code;
+    }
+
+    var iconInfo = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6.25"></circle><path d="M8 7.25v3.4"></path><path d="M8 5.05h.01"></path></svg>';
+    var iconCode = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.75 5 2.75 8l3 3"></path><path d="M10.25 5l3 3-3 3"></path></svg>';
+    var markdownLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+
+    function renderText(value) {
+      return escapeHtml(value || '').replace(markdownLinkPattern, function(match, label, url) {
+        return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+      });
+    }
+
+    function citationViews(citation, note) {
+      if (!citation) return [];
+      if (citation.kind === 'text') return citation.explanation ? ['info'] : [];
+      var views = [];
+      if (citation.code) {
+        if (note) views.push('info');
+        views.push('code');
+      }
+      return views;
+    }
+
+    var popoverElement = null;
+    var activeTrigger = null;
+    var activeCitation = null;
+    var activeNote = '';
+    var repositionHandle = null;
+
+    function ensurePopover() {
+      if (popoverElement && popoverElement.isConnected) return popoverElement;
+      popoverElement = document.createElement('div');
+      popoverElement.className = 'glean-citation-popover';
+      popoverElement.setAttribute('role', 'dialog');
+      popoverElement.hidden = true;
+      document.body.appendChild(popoverElement);
+      return popoverElement;
+    }
+
+    function renderCodePanel(citation) {
+      var fullCode = getFullCode();
+      var hasFullCode = fullCode && fullCode !== citation.code;
+      var showingFull = popoverElement.dataset.full === 'true' && hasFullCode;
+      return renderPythonCode(showingFull ? fullCode : (citation.code || ''), showingFull ? 1 : (citation.start_line || 1));
+    }
+
+    function renderActiveView(citation, view) {
+      if (view === 'code') return renderCodePanel(citation);
+      var text = citation.kind === 'text' ? citation.explanation : activeNote;
+      return text ? '<p class="glean-citation-text">' + renderText(text) + '</p>' : '';
+    }
+
+    function renderPopover() {
+      if (!activeCitation) return;
+      var views = citationViews(activeCitation, activeNote);
+      var view = popoverElement.dataset.view;
+      if (views.indexOf(view) === -1) {
+        view = views[0] || 'info';
+        popoverElement.dataset.view = view;
+      }
+      var fullCode = getFullCode();
+      var hasFullCode = fullCode && fullCode !== activeCitation.code;
+      var segmented = views.length > 1
+        ? '<div class="glean-citation-segmented" role="tablist">' +
+            '<button type="button" class="glean-citation-segment" role="tab" data-glean-citation-view="info" aria-label="Explanation" aria-selected="' + (view === 'info') + '">' + iconInfo + '</button>' +
+            '<button type="button" class="glean-citation-segment" role="tab" data-glean-citation-view="code" aria-label="Code" aria-selected="' + (view === 'code') + '">' + iconCode + '</button>' +
+          '</div>'
+        : '';
+      var toggle = view === 'code' && hasFullCode
+        ? '<button type="button" class="glean-citation-toggle" data-glean-citation-toggle-full>' +
+            (popoverElement.dataset.full === 'true' ? 'Show only relevant code' : 'Show full code') + '</button>'
+        : '';
+      var header = segmented || toggle ? '<div class="glean-citation-header">' + toggle + segmented + '</div>' : '';
+      popoverElement.innerHTML = '<div class="glean-citation-content">' + renderActiveView(activeCitation, view) + '</div>' + header;
+    }
+
+    function positionPopover() {
+      if (!activeTrigger || !popoverElement || popoverElement.hidden) return;
+      var margin = 8;
+      var rect = activeTrigger.getBoundingClientRect();
+      var width = popoverElement.offsetWidth;
+      var height = popoverElement.offsetHeight;
+      var viewportWidth = document.documentElement.clientWidth;
+      var viewportHeight = window.innerHeight;
+      var left = Math.max(margin, Math.min(rect.left, viewportWidth - width - margin));
+      var placeBelow = viewportHeight - rect.bottom >= height + margin || rect.top < height + margin;
+      var top = placeBelow ? rect.bottom + margin : rect.top - height - margin;
+      top = Math.max(margin, top);
+      popoverElement.style.left = (left + window.scrollX) + 'px';
+      popoverElement.style.top = (top + window.scrollY) + 'px';
+    }
+
+    function scheduleReposition() {
+      if (repositionHandle) return;
+      repositionHandle = window.requestAnimationFrame(function() {
+        repositionHandle = null;
+        positionPopover();
+      });
+    }
+
+    function closeCitation() {
+      if (!popoverElement || popoverElement.hidden) return;
+      popoverElement.hidden = true;
+      popoverElement.innerHTML = '';
+      activeTrigger = null;
+      activeCitation = null;
+      activeNote = '';
+    }
+
+    function openCitation(trigger, name) {
+      var citation = ((window.APP_DATA && window.APP_DATA.citations) || {})[name];
+      var note = trigger.getAttribute('data-citation-note') || '';
+      if (!citation || !citationViews(citation, note).length) return;
+      ensurePopover();
+      if (activeTrigger === trigger && !popoverElement.hidden) {
+        closeCitation();
+        return;
+      }
+      activeTrigger = trigger;
+      activeCitation = citation;
+      activeNote = note;
+      popoverElement.dataset.full = 'false';
+      popoverElement.dataset.view = citationViews(citation, note)[0];
+      popoverElement.hidden = false;
+      renderPopover();
+      positionPopover();
+    }
+
+    document.addEventListener('click', function(event) {
+      var target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+      var trigger = target.closest('.glean-citation[data-citation]');
+      if (trigger) {
+        event.preventDefault();
+        openCitation(trigger, trigger.getAttribute('data-citation'));
+        return;
+      }
+      if (!popoverElement || popoverElement.hidden) return;
+      if (!target.closest('.glean-citation-popover')) {
+        closeCitation();
+        return;
+      }
+      var segment = target.closest('[data-glean-citation-view]');
+      if (segment) {
+        popoverElement.dataset.view = segment.getAttribute('data-glean-citation-view');
+        renderPopover();
+        positionPopover();
+        return;
+      }
+      if (target.closest('[data-glean-citation-toggle-full]')) {
+        popoverElement.dataset.full = popoverElement.dataset.full === 'true' ? 'false' : 'true';
+        renderPopover();
+        positionPopover();
+      }
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') closeCitation();
+    });
+    window.addEventListener('scroll', scheduleReposition, true);
+    window.addEventListener('resize', scheduleReposition);
+
+    window.LiveWebAppCitations = {
+      escapeHtml: escapeHtml,
+      highlightPython: highlightPython,
+      renderPythonCode: renderPythonCode,
+      renderText: renderText,
+      open: openCitation,
+      close: closeCitation
+    };
+  })();
+</script>
+
+</head>
+<body>
+<header class="hero" data-glean-id="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <img class="logo" alt="MongoDB" src="data:image/png;base64,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">
+      <div class="hero-actions"><button type="button" class="view-toggle" id="viewToggle" data-skip-annotation>View results</button><button type="button" class="view-toggle" id="guideBtn" aria-expanded="false" aria-controls="guide">Rating guide</button></div>
+    </div>
+    <section id="guide" class="guide" data-glean-id="rating-guide" hidden aria-label="Rating guide">
+      <h2>Rating guide</h2>
+      <p class="gh">Session ratings</p>
+      <dl>
+        <dt>1 Poor</dt><dd>Not relevant or not useful to my work.</dd>
+        <dt>2 Fair</dt><dd>Some useful parts, but unclear or not well run.</dd>
+        <dt>3 Good</dt><dd>Useful and clear. Met my expectations.</dd>
+        <dt>4 Very good</dt><dd>Valuable. I plan to act on what I learned.</dd>
+        <dt>5 Excellent</dt><dd>Outstanding. Changed how I think or plan.</dd>
+        <dt>Didn’t attend</dt><dd>I missed this session. It won’t count toward the average.</dd>
+      </dl>
+      <p class="gh">Agreement questions</p>
+      <dl>
+        <dt>1</dt><dd>Strongly disagree</dd>
+        <dt>3</dt><dd>Neutral</dd>
+        <dt>5</dt><dd>Strongly agree</dd>
+      </dl>
+    </section>
+    <h1 data-glean-id="survey-title">FY27Q3 Technical Services QBR</h1>
+    <p data-glean-id="survey-intro">Share what worked well across the QBR and how we can make the next event better. It takes about five minutes.</p>
+    <p class="meta" data-glean-id="survey-anonymity">This survey doesn’t ask for your name or email, and results never show who said what.</p>
+    <p class="meta" data-glean-id="survey-meta">November 17–19, 2026 · Asbury Park, NJ</p>
+  </div>
+</header>
+
+<main>
+  <div id="statusBanner" class="banner" hidden data-skip-annotation></div>
+
+  <section id="surveyView" aria-live="polite" data-glean-id="survey" data-skip-annotation>
+    <ol class="steps" id="steps"></ol>
+    <div id="stepBody"></div>
+    <div class="nav">
+      <button type="button" class="btn" id="backBtn">Back</button>
+      <span class="progress-note" id="progressNote"></span>
+      <button type="button" class="btn primary" id="nextBtn">Next</button>
+    </div>
+  </section>
+
+  <section id="thanksView" class="thanks" hidden data-glean-id="thanks">
+    <h2>Thanks for the feedback</h2>
+    <p>Your response was saved in this browser. The results page never shows names. To change your response, submit again from this device and your new response replaces the earlier one. Responses remain available in this browser until its site data is cleared.</p>
+    <div class="tools">
+      <button type="button" class="btn primary" id="editBtn">Edit my response</button>
+      <button type="button" class="btn" id="newBtn">Start a new response</button>
+    </div>
+    <p class="tool-note">Using a shared device? Choose “Start a new response” so the next person begins with a blank survey.</p>
+  </section>
+
+  <section id="resultsView" class="results" hidden data-glean-id="results" data-skip-annotation></section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  var SESSIONS = [
+    { id: "s01", day: 0, title: "Welcome and Opening Remarks", owners: "Ronnen Miller" },
+    { id: "s02", day: 0, title: "From Insights to Strategic Actions", owners: "Ronnen Miller" },
+    { id: "s03", day: 0, title: "Strategic Initiatives Process Review", owners: "Lauren Ovans" },
+    { id: "s04", day: 0, title: "The Future of Chat: Quality of Service Thresholds", owners: "Lisa Nolan, Fernanda Palomino, Colm Russell" },
+    { id: "s05", day: 0, title: "Strategic Insights and Indicators: Metrics that Matter", owners: "Anokhee Cohen, Gracelyn Newhouse, Andrew Childress, Khalen Fredieu" },
+    { id: "s06", day: 1, title: "Operationalizing the TS Tooling Narrative", owners: "Colm Russell, Andre de Frere, Lauren Ovans, Jose Viloria Martin" },
+    { id: "s07", day: 1, title: "Data for Sustainable Performance: Budget and Workforce Planning", owners: "Blake Deakin, Anokhee Cohen" },
+    { id: "s08", day: 1, title: "Observability Roadmap and Planning", owners: "Frank Sun (filling in for Zvonimir Turcinov)" },
+    { id: "s09", day: 1, title: "Cloud Provider Capacity Planning", owners: "Brian Blevins, Karol Zapolski, Deirdre Lambe" },
+    { id: "s10", day: 1, title: "From APlus to CAP(lus)", owners: "Andre de Frere, Madeline Clark, Ankit Kakkar" },
+    { id: "s11", day: 1, title: "USS Update", owners: "Blake Deakin" },
+    { id: "s12", day: 2, title: "Escalation / Incident Management Discussion (VP only)", owners: "Gary Ryan" },
+    { id: "s13", day: 2, title: "Partners and Migration", owners: "Krishna Kattumadam, Zynon Putney" },
+    { id: "s14", day: 2, title: "TSE Leadership: AMER", owners: "Blake Deakin" },
+    { id: "s15", day: 2, title: "TSE Leadership: APAC", owners: "André de Frere" },
+    { id: "s16", day: 2, title: "TSE Leadership: EMEA", owners: "Colm Russell" },
+    { id: "s17", day: 2, title: "Cloud Operations", owners: "Karol Zapolski" },
+    { id: "s18", day: 2, title: "Tools", owners: "Paul Rooney" }
+  ];
+
+  var INFO = {
+    s01: { what: "Settle the team in and agree ground rules for the meeting." },
+    s02: { what: "Ronnen shares his five Q4 priorities and why. The group validates, challenges, confirms or adds to them.", why: "With leadership in transition, this aligns everyone on the short-term focus." },
+    s03: { what: "The SLT discusses openly whether and how to evolve the strategic initiatives process in Q4, building on the priorities just aligned.", why: "So resources and work are allocated in the right place." },
+    s04: { what: "Describes the status quo, industry expectations and future ATC capability for chat quality of service.", why: "Raised in the budget meeting, this helps us understand the value and priority we place on ATSE chat needs." },
+    s05: { what: "Metrics and Q3 trends go out as a pre-read. The session covers trend data, industry best practices and findings, then discusses which insights matter most, where to focus in Q4, and whether to change how we operate.", why: "Feedback says metrics land best when read ahead of time, which frees the session for trends and discussion. Leaders value the discussion, and dedicated time makes it more meaningful." },
+    s06: { what: "Decide the process for tool ideation and deployment.", why: "Brought up in the SLT meeting; this continues the conversation to align on go-forward guidance." },
+    s07: { what: "A stack-ranked budgeting approach that protects the core while flexing at the edge, plus early requirements for workforce management and headcount planning that support real-time staffing.", why: "Blake proposes making budget and resource planning part of how we operate." },
+    s08: { what: "Product roadmap and planning update.", why: "Follows a recommendation from Blake Deakin and Nicholas Tang." },
+    s09: { what: "Cloud capacity planning, including the new findings Brian presented at the SLT meeting.", why: "This sits in Karol’s area, and Brian’s new findings make it a natural chance to partner." },
+    s10: { what: "Understand the similarities between the new Critical Accounts Process (CAP) and Aplus.", why: "CX needs TS Support for CAP to succeed." },
+    s11: { what: "A 30-minute presentation on USS." },
+    s12: { what: "Gary leads a discussion of escalation management topics and strategy. VP only." },
+    s13: { what: "IBM and TSANet, how we scale partner support, and the decisions we need from this group." },
+    s14: { what: "An update on AMER: wins, improvement areas and partnership opportunities." },
+    s15: { what: "An update on APAC: wins, improvement areas and partnership opportunities." },
+    s16: { what: "An update on EMEA: wins, improvement areas and partnership opportunities." },
+    s17: { what: "An update from Cloud Operations." },
+    s18: { what: "Q4 projects and an update on ATC / Focus Mode." }
+  };
+
+  var DAYS = [
+    { name: "Day 1", title: "Where we are and what matters next", when: "Tuesday, November 17", summary: "Strategy and priority-driven conversations, supported by data. Leadership shares the Q4 priorities, reviews the strategic initiatives process, and works through chat service thresholds and the Q3 metrics.", outcome: "A shared view of the Q4 priorities and focus areas, a view on whether to evolve the strategic initiatives process, and a clearer position on the priority of chat service." },
+    { name: "Day 2", title: "TS global initiatives and updates", when: "Wednesday, November 18", summary: "Global topics that cut across TS: tooling, budget and workforce planning, observability, cloud capacity, the Critical Accounts Process and USS.", outcome: "Agreement on a process for tool ideation and deployment and on an approach to budget and workforce planning, plus a shared understanding of the roadmap, capacity risks and CAP." },
+    { name: "Day 3", title: "Functional and regional updates", when: "Thursday, November 19", summary: "Raises awareness of regional and functional efforts and gathers feedback on operating rhythms. Each region or function shares how the quarter went, where it needs to improve, and where it wants feedback. A session can be a presentation or a discussion.", outcome: "Shared problems and shared fixes across regions and functions rather than a status readout, plus decisions on partner support and a common approach to incident command and escalation." }
+  ];
+
+  var RATING_LABELS = { 1: "Poor", 2: "Fair", 3: "Good", 4: "Very good", 5: "Excellent" };
+
+  var AGREE = [
+    { id: "alignedQ4", text: "The QBR helped align me on Q4 priorities." },
+    { id: "discussionTime", text: "There was enough time for discussion, not just presentation." },
+    { id: "prereads", text: "The pre-reads (such as the metrics and Q3 trends) prepared me well for the sessions." }
+  ];
+  var AGREE_LABELS = { 5: "Strongly agree", 4: "Agree", 3: "Neutral", 2: "Disagree", 1: "Strongly disagree" };
+
+  var COMMENTS = [
+    { id: "mostValuable", text: "Which session was most valuable to you, and why?" },
+    { id: "leastValuable", text: "Which session was least valuable, or what would you change about it?" },
+    { id: "q4Followups", text: "What decisions or follow-ups from this QBR matter most for Q4?" },
+    { id: "nextTopics", text: "What topics should we add, cut, or give more time at the next QBR?" },
+    { id: "other", text: "Any other comments?", optional: true }
+  ];
+
+  var STEPS = ["Day 1", "Day 2", "Day 3", "Overall", "Your feedback"];
+
+
+  var state = blankState();
+  var step = 0;
+  var editingId = null;
+  var view = "survey";
+  var submitting = false;
+
+  function blankState() {
+    return { ratings: {}, sessionComments: {}, overallComment: "", overall: "", agree: {}, pacing: "", mix: "", logistics: "", comments: {} };
+  }
+
+  function $(id) { return document.getElementById(id); }
+  function el(tag, props, children) {
+    var n = document.createElement(tag);
+    if (props) Object.keys(props).forEach(function (k) {
+      if (k === "text") n.textContent = props[k];
+      else if (k === "class") n.className = props[k];
+      else if (k === "html") { /* never used with data */ }
+      else n.setAttribute(k, props[k]);
+    });
+    (children || []).forEach(function (c) { if (c) n.appendChild(c); });
+    return n;
+  }
+
+  /* ---------- rendering ---------- */
+  function renderSteps() {
+    var ol = $("steps"); ol.textContent = "";
+    STEPS.forEach(function (name, i) {
+      var b = el("button", { type: "button" });
+      var done = stepComplete(i);
+      b.textContent = name;
+      if (done && i !== step) { var c = el("span", { class: "done", "aria-hidden": "true", text: " ✓" }); b.appendChild(c); }
+      if (i === step) b.setAttribute("aria-current", "step");
+      b.addEventListener("click", function () { goTo(i); });
+      ol.appendChild(el("li", null, [b]));
+    });
+  }
+
+  function stepComplete(i) {
+    if (i <= 2) {
+      var ids = SESSIONS.filter(function (s) { return s.day === i; });
+      return ids.every(function (s) { return state.ratings[s.id] !== undefined; });
+    }
+    if (i === 3) return !!state.overall;
+    return COMMENTS.some(function (c) { return (state.comments[c.id] || "").trim(); });
+  }
+
+  function seg(name, options, current, onPick, labelClass) {
+    var wrap = el("div", { class: "seg", role: "radiogroup" });
+    options.forEach(function (o) {
+      var lab = el("label", { class: (labelClass || "") + (o.na ? " na" : "") });
+      var inp = el("input", { type: "radio", name: name, value: String(o.value) });
+      if (String(current) === String(o.value)) inp.checked = true;
+      inp.addEventListener("change", function () { onPick(o.value); renderSteps(); });
+      var sp = el("span", { text: o.label });
+      if (o.aria) inp.setAttribute("aria-label", o.aria);
+      lab.appendChild(inp); lab.appendChild(sp);
+      wrap.appendChild(lab);
+    });
+    return wrap;
+  }
+
+  function renderDay(i) {
+    var body = $("stepBody"); body.textContent = "";
+    body.appendChild(el("h2", { class: "step-title", text: DAYS[i].name + ": " + DAYS[i].title }));
+    body.appendChild(el("p", { class: "step-help", text: DAYS[i].when + ". Rate each session you attended from 1 to 5. Choose “Didn’t attend” for any you missed; you can leave a session blank to skip it. Add a comment under any session." }));
+    var sum = el("div", { class: "day-sum" });
+    var sdl = el("dl");
+    sdl.appendChild(el("div", { class: "pair" }, [el("dt", { text: "Day summary" }), el("dd", { text: DAYS[i].summary })]));
+    sdl.appendChild(el("div", { class: "pair" }, [el("dt", { text: "Intended outcome" }), el("dd", { text: DAYS[i].outcome })]));
+    sum.appendChild(sdl); body.appendChild(sum);
+    var key = el("div", { class: "scale-key", "aria-hidden": "true" }, [el("span", { text: "1 Poor" }), el("span", { text: "5 Excellent" })]);
+    body.appendChild(key);
+    SESSIONS.filter(function (s) { return s.day === i; }).forEach(function (s) {
+      var fs = el("fieldset", { class: "q" });
+      fs.appendChild(el("legend", { text: s.title }));
+      fs.appendChild(el("p", { class: "owners", text: s.owners }));
+      var info = INFO[s.id];
+      if (info) {
+        var det = el("details", { class: "about" });
+        det.appendChild(el("summary", { text: "What it was for" }));
+        var dl = el("dl");
+        dl.appendChild(el("dt", { text: "Intended outcome" })); dl.appendChild(el("dd", { text: info.what }));
+        if (info.why) { dl.appendChild(el("dt", { text: "Why" })); dl.appendChild(el("dd", { text: info.why })); }
+        det.appendChild(dl); fs.appendChild(det);
+      }
+      var opts = [1, 2, 3, 4, 5].map(function (n) { return { value: n, label: String(n), aria: n + ", " + RATING_LABELS[n] }; });
+      opts.push({ value: "na", label: "Didn’t attend", na: true });
+      fs.appendChild(seg("r_" + s.id, opts, state.ratings[s.id], function (v) {
+        state.ratings[s.id] = v === "na" ? "na" : Number(v);
+      }));
+      var cl = el("label", { class: "sc-label", for: "sc_" + s.id, text: "Comments on this session (optional)" });
+      var ta = el("textarea", { id: "sc_" + s.id, maxlength: "1500", rows: "2", placeholder: "What worked, what didn’t, what should change" });
+      ta.value = state.sessionComments[s.id] || "";
+      ta.addEventListener("input", function () { state.sessionComments[s.id] = ta.value; });
+      fs.appendChild(cl); fs.appendChild(ta);
+      body.appendChild(fs);
+    });
+  }
+
+  function selectField(id, labelText, options, current, onPick, invalid) {
+    var box = el("div", { class: "q" + (invalid ? " invalid" : ""), id: "q_" + id });
+    var lab = el("label", { class: "q-label", for: id, text: labelText });
+    var sel = el("select", { id: id });
+    sel.appendChild(el("option", { value: "", text: "Choose one" }));
+    options.forEach(function (o) {
+      var op = el("option", { value: String(o.value), text: o.label });
+      if (String(current) === String(o.value)) op.selected = true;
+      sel.appendChild(op);
+    });
+    sel.addEventListener("change", function () { onPick(sel.value); renderSteps(); box.classList.remove("invalid"); var e = box.querySelector(".err"); if (e) e.remove(); });
+    box.appendChild(lab); box.appendChild(sel);
+    if (invalid) box.appendChild(el("p", { class: "err", role: "alert", text: "Choose an overall rating to submit." }));
+    return box;
+  }
+
+  function ratingOptions() {
+    return [5, 4, 3, 2, 1].map(function (n) { return { value: n, label: n + " – " + RATING_LABELS[n] }; });
+  }
+
+  function renderOverall(showErr) {
+    var body = $("stepBody"); body.textContent = "";
+    body.appendChild(el("h2", { class: "step-title", text: "Overall QBR" }));
+    body.appendChild(el("p", { class: "step-help", text: "Only the overall rating is required." }));
+    body.appendChild(selectField("overall", "Overall, how would you rate the QBR?", ratingOptions(), state.overall, function (v) { state.overall = v === "" ? "" : Number(v); }, showErr && !state.overall));
+    AGREE.forEach(function (a) {
+      var opts = [5, 4, 3, 2, 1].map(function (n) { return { value: n, label: n + " – " + AGREE_LABELS[n] }; });
+      body.appendChild(selectField("agree_" + a.id, a.text, opts, state.agree[a.id], function (v) { state.agree[a.id] = v === "" ? undefined : Number(v); }));
+    });
+    var p = el("fieldset", { class: "q" });
+    p.appendChild(el("legend", { text: "The pacing and length of each day was:" }));
+    p.appendChild(seg("pacing", ["Too short", "About right", "Too long"].map(function (t) { return { value: t, label: t }; }), state.pacing, function (v) { state.pacing = v; }, "wide"));
+    body.appendChild(p);
+    var m = el("fieldset", { class: "q" });
+    m.appendChild(el("legend", { text: "The mix of topics across the three days was:" }));
+    m.appendChild(seg("mix", ["Too strategic", "About right", "Too operational"].map(function (t) { return { value: t, label: t }; }), state.mix, function (v) { state.mix = v; }, "wide"));
+    body.appendChild(m);
+    body.appendChild(selectField("logistics", "Logistics (venue, meals, schedule, virtual access)", ratingOptions(), state.logistics, function (v) { state.logistics = v === "" ? "" : Number(v); }));
+    var ob = el("div", { class: "q" });
+    var ol = el("label", { class: "q-label", for: "overallComment" });
+    ol.appendChild(document.createTextNode("Comments on the QBR overall "));
+    ol.appendChild(el("small", { text: "(optional)" }));
+    var ota = el("textarea", { id: "overallComment", maxlength: "2000", placeholder: "Anything about the QBR as a whole: format, flow, preparation, what to keep or change" });
+    ota.value = state.overallComment || "";
+    ota.addEventListener("input", function () { state.overallComment = ota.value; });
+    ob.appendChild(ol); ob.appendChild(ota);
+    body.appendChild(ob);
+  }
+
+  function renderComments() {
+    var body = $("stepBody"); body.textContent = "";
+    body.appendChild(el("h2", { class: "step-title", text: "Your feedback" }));
+    body.appendChild(el("p", { class: "step-help", text: "Short answers are fine. Specific examples help us most." }));
+    COMMENTS.forEach(function (c) {
+      var box = el("div", { class: "q" });
+      var lab = el("label", { class: "q-label", for: "c_" + c.id });
+      lab.appendChild(document.createTextNode(c.text));
+      if (c.optional) lab.appendChild(el("small", { text: " (optional)" }));
+      var ta = el("textarea", { id: "c_" + c.id, maxlength: "2000" });
+      ta.value = state.comments[c.id] || "";
+      ta.addEventListener("input", function () { state.comments[c.id] = ta.value; });
+      ta.addEventListener("blur", renderSteps);
+      box.appendChild(lab); box.appendChild(ta);
+      body.appendChild(box);
+    });
+  }
+
+  function renderStep(showErr) {
+    if (step <= 2) renderDay(step);
+    else if (step === 3) renderOverall(showErr);
+    else renderComments();
+    renderSteps();
+    $("backBtn").disabled = step === 0;
+    $("nextBtn").textContent = step === STEPS.length - 1 ? "Submit feedback" : "Next";
+    $("progressNote").textContent = "Step " + (step + 1) + " of " + STEPS.length;
+  }
+
+  function goTo(i, showErr) { step = i; renderStep(!!showErr); window.scrollTo({ top: 0 }); }
+
+  function avg(list) { return list.length ? list.reduce(function (a, b) { return a + b; }, 0) / list.length : null; }
+  function fmt(n) { return n === null ? "–" : n.toFixed(1); }
+
+
+  /* ---------- local browser response storage ---------- */
+  var RESPONSE_STORE_KEY = "fy27q3-ts-qbr-responses-v1";
+  var NA_TEXT = "Didn’t attend";
+  var HEAD = ["Response ID", "Submitted at (UTC)", "Overall rating", "Logistics rating", "Pacing", "Topic mix"]
+    .concat(AGREE.map(function (a) { return a.text; }))
+    .concat(SESSIONS.map(function (s) { return s.id + " " + s.title + " (rating)"; }))
+    .concat(SESSIONS.map(function (s) { return s.id + " " + s.title + " (comment)"; }))
+    .concat(["Overall QBR comment"])
+    .concat(COMMENTS.map(function (c) { return c.text; }));
+  var MINE_KEY = "fy27q3-ts-qbr-my-response-v2";
+
+  function errText(e) {
+    if (!e) return "Unknown error.";
+    if (typeof e === "string") return e;
+    return e.message || (function () { try { return JSON.stringify(e); } catch (x) { return String(e); } })();
+  }
+  function readStoredResponses() {
+    try {
+      var responses = JSON.parse(localStorage.getItem(RESPONSE_STORE_KEY) || "[]");
+      return Array.isArray(responses) ? responses : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function saveStoredResponse(response) {
+    var responses = readStoredResponses();
+    var index = responses.findIndex(function (saved) { return saved.id === response.id; });
+    if (index === -1) responses.push(response);
+    else responses[index] = response;
+    localStorage.setItem(RESPONSE_STORE_KEY, JSON.stringify(responses));
+  }
+  async function readAllRows() {
+    return readStoredResponses().map(toRow);
+  }
+  function toRow(d) {
+    function cell(v) { return v === undefined || v === null ? "" : v; }
+    return [d.id, d.submittedAt, cell(d.overall), cell(d.logistics), d.pacing || "", d.mix || ""]
+      .concat(AGREE.map(function (a) { return cell(d.agree[a.id]); }))
+      .concat(SESSIONS.map(function (s) { var r = d.ratings[s.id]; return r === "na" ? NA_TEXT : cell(r); }))
+      .concat(SESSIONS.map(function (s) { return d.sessionComments[s.id] || ""; }))
+      .concat([d.overallComment || ""])
+      .concat(COMMENTS.map(function (c) { return d.comments[c.id] || ""; }));
+  }
+  function num(v) { if (v === "" || v === null || v === undefined) return null; var n = Number(v); return isFinite(n) && n > 0 ? n : null; }
+  function str(v) { return v === null || v === undefined ? "" : String(v); }
+  function rowToDoc(r) {
+    var i = 0, d = { agree: {}, ratings: {}, sessionComments: {}, comments: {} };
+    d.id = str(r[i++]); d.submittedAt = str(r[i++]); d.overall = num(r[i++]); d.logistics = num(r[i++]); d.pacing = str(r[i++]); d.mix = str(r[i++]);
+    AGREE.forEach(function (a) { var v = num(r[i++]); if (v !== null) d.agree[a.id] = v; });
+    SESSIONS.forEach(function (s) { var v = r[i++]; if (/^(didn.t attend|na)$/i.test(str(v).trim())) d.ratings[s.id] = "na"; else if (num(v) !== null) d.ratings[s.id] = num(v); });
+    SESSIONS.forEach(function (s) { var v = str(r[i++]); if (v) d.sessionComments[s.id] = v; });
+    d.overallComment = str(r[i++]);
+    COMMENTS.forEach(function (c) { var v = str(r[i++]); if (v) d.comments[c.id] = v; });
+    return d;
+  }
+  function latestPerResponse(rows) {
+    var byId = {}, order = [];
+    rows.forEach(function (r) {
+      if (!r || !r.length || str(r[0]) === HEAD[0]) return;
+      var d = rowToDoc(r); if (!d.id) return;
+      if (!byId[d.id]) order.push(d.id);
+      byId[d.id] = d;
+    });
+    return order.map(function (id) { return byId[id]; });
+  }
+
+  /* ---------- local copy of my answers (for editing) ---------- */
+  function saveMine(p) { try { localStorage.setItem(MINE_KEY, JSON.stringify({ id: p.id })); } catch (e) {} }
+  function loadMine() { try { return JSON.parse(localStorage.getItem(MINE_KEY) || "null"); } catch (e) { return null; } }
+  function clearMine() { try { localStorage.removeItem(MINE_KEY); } catch (e) {} }
+  function newId() { return "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  /* ---------- submit ---------- */
+  function cleanPayload() {
+    var ratings = {};
+    Object.keys(state.ratings).forEach(function (k) { ratings[k] = state.ratings[k]; });
+    var agree = {};
+    Object.keys(state.agree).forEach(function (k) { if (state.agree[k] !== undefined) agree[k] = state.agree[k]; });
+    var sessionComments = {};
+    Object.keys(state.sessionComments).forEach(function (k) { var t = (state.sessionComments[k] || "").trim(); if (t) sessionComments[k] = t.slice(0, 1500); });
+    var comments = {};
+    Object.keys(state.comments).forEach(function (k) { var t = (state.comments[k] || "").trim(); if (t) comments[k] = t.slice(0, 2000); });
+    return {
+      submittedAt: new Date().toISOString().slice(0, 10),
+      ratings: ratings, sessionComments: sessionComments, overall: state.overall, agree: agree,
+      pacing: state.pacing || "", mix: state.mix || "", overallComment: (state.overallComment || "").trim().slice(0, 2000),
+      logistics: state.logistics === "" ? null : state.logistics,
+      comments: comments
+    };
+  }
+  function showBanner(msg, warn) {
+    var b = $("statusBanner");
+    b.textContent = msg; b.className = "banner" + (warn ? " warn" : ""); b.hidden = !msg;
+  }
+  function retryButton() {
+    var box = $("statusBanner");
+    var b = el("button", { type: "button", class: "btn primary", text: "Try saving again" });
+    b.style.marginTop = "10px";
+    b.addEventListener("click", function () { submit(); });
+    box.appendChild(document.createElement("br"));
+    box.appendChild(b);
+  }
+  async function submit() {
+    if (!state.overall) { goTo(3, true); return; }
+    if (submitting) return;
+    submitting = true;
+    var btn = $("nextBtn"); btn.disabled = true; btn.textContent = "Saving…";
+    showBanner("Saving your response…");
+    var p = cleanPayload(); p.id = editingId || newId();
+    try {
+      saveStoredResponse(p);
+      editingId = p.id; saveMine(p);
+      showBanner("");
+      show("thanks");
+    } catch (e) {
+      console.error("[QBR survey] save failed", e);
+      showBanner("Your response wasn’t saved. Error: " + errText(e) + " Your answers are still on this page.", true);
+      retryButton();
+    } finally {
+      submitting = false; btn.disabled = false;
+      if (view === "survey") btn.textContent = step === STEPS.length - 1 ? "Submit feedback" : "Next";
+    }
+  }
+
+  /* ---------- views ---------- */
+  function show(v) {
+    view = v;
+    $("surveyView").hidden = v !== "survey";
+    $("thanksView").hidden = v !== "thanks";
+    $("resultsView").hidden = v !== "results";
+    $("viewToggle").textContent = v === "results" ? "Back to survey" : "View results";
+    if (v === "results") openResults();
+    window.scrollTo({ top: 0 });
+  }
+  function resetForNew() {
+    state = blankState(); editingId = null; clearMine(); showBanner("");
+    show("survey"); goTo(0);
+  }
+
+  /* ---------- results (read from browser-local responses) ---------- */
+  /* ---------- results ---------- */
+  var MIN_N = 1;
+  var CHOICES = { pacing: ["Too short", "About right", "Too long"], mix: ["Too strategic", "About right", "Too operational"] };
+  var SNAPSHOT = null;
+  var liveSummary = null, liveState = "idle", liveManual = false, liveTried = false;
+
+  function shuffled(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function round2(n) { return Math.round(n * 100) / 100; }
+  function score(vals) {
+    var ok = vals.length >= MIN_N;
+    return { n: vals.length, avg: ok ? round2(avg(vals)) : null, top2: ok ? round2(vals.filter(function (v) { return v >= 4; }).length / vals.length) : null };
+  }
+  function choice(docs, key) {
+    var counts = {}, n = 0;
+    docs.forEach(function (d) { if (d[key]) { counts[d[key]] = (counts[d[key]] || 0) + 1; n++; } });
+    return { n: n, counts: n >= MIN_N ? counts : null };
+  }
+  /* Same anonymous summary shape as the embedded snapshot. */
+  function summarize(docs) {
+    var s = { count: docs.length, min_n: MIN_N, fetched_at: new Date().toISOString() };
+    if (docs.length < MIN_N) return s;
+    s.overall = score(docs.map(function (d) { return d.overall; }).filter(Number));
+    s.logistics = score(docs.map(function (d) { return d.logistics; }).filter(Number));
+    s.sessions = {};
+    SESSIONS.forEach(function (x) {
+      var vals = [], na = 0;
+      docs.forEach(function (d) { var r = d.ratings[x.id]; if (typeof r === "number") vals.push(r); else if (r === "na") na++; });
+      var sc = score(vals); sc.na = na;
+      sc.comments = shuffled(docs.map(function (d) { return d.sessionComments[x.id]; }).filter(Boolean));
+      s.sessions[x.id] = sc;
+    });
+    s.agree = {};
+    AGREE.forEach(function (q) { s.agree[q.id] = score(docs.map(function (d) { return d.agree[q.id]; }).filter(Number)); });
+    s.pacing = choice(docs, "pacing"); s.mix = choice(docs, "mix");
+    s.overall_comments = shuffled(docs.map(function (d) { return d.overallComment; }).filter(Boolean));
+    s.comments = {};
+    COMMENTS.forEach(function (c) { s.comments[c.id] = shuffled(docs.map(function (d) { return d.comments[c.id]; }).filter(Boolean)); });
+    return s;
+  }
+
+  function cite(key) {
+    var c = window.APP_DATA && window.APP_DATA.citations;
+    if (!c || !c[key]) return null;
+    return el("button", { type: "button", class: "glean-citation", "data-citation": key, "aria-label": "Show source", text: "i" });
+  }
+  function pct(x) { return x === null || x === undefined ? "–" : Math.round(x * 100) + "%"; }
+  function titlesOf(list) {
+    var names = list.map(function (o) { return o.x.title; });
+    if (names.length > 3) return names.slice(0, 3).join(", ") + " and " + (names.length - 3) + " more";
+    return names.length === 1 ? names[0] : names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+  }
+  function topChoice(c) {
+    if (!c || !c.counts) return null;
+    var best = null;
+    Object.keys(c.counts).forEach(function (k) { if (!best || c.counts[k] > c.counts[best]) best = k; });
+    var tie = Object.keys(c.counts).filter(function (k) { return c.counts[k] === c.counts[best]; }).length > 1;
+    return tie ? null : { label: best, k: c.counts[best], n: c.n };
+  }
+  function takeaways(s) {
+    var out = [];
+    if (s.overall && s.overall.avg !== null) out.push(["Overall: ", fmt(s.overall.avg) + " out of 5, with " + pct(s.overall.top2) + " rating the QBR 4 or 5."]);
+    var rated = SESSIONS.map(function (x) { return { x: x, r: s.sessions && s.sessions[x.id] }; }).filter(function (o) { return o.r && o.r.avg !== null; });
+    if (rated.length) {
+      var hi = Math.max.apply(null, rated.map(function (o) { return o.r.avg; }));
+      var lo = Math.min.apply(null, rated.map(function (o) { return o.r.avg; }));
+      out.push(["Highest rated: ", titlesOf(rated.filter(function (o) { return o.r.avg === hi; })) + " (" + fmt(hi) + ")."]);
+      if (lo < hi) out.push(["Lowest rated: ", titlesOf(rated.filter(function (o) { return o.r.avg === lo; })) + " (" + fmt(lo) + ")."]);
+    }
+    var p = topChoice(s.pacing); if (p) out.push(["Pacing: ", "most said “" + p.label + "” (" + p.k + " of " + p.n + ")."]);
+    var m = topChoice(s.mix); if (m) out.push(["Topic mix: ", "most said “" + m.label + "” (" + m.k + " of " + m.n + ")."]);
+    var ag = AGREE.map(function (q) { return { q: q, r: s.agree && s.agree[q.id] }; }).filter(function (o) { return o.r && o.r.avg !== null; });
+    if (ag.length > 1) {
+      var low = ag.reduce(function (a, b) { return b.r.avg < a.r.avg ? b : a; });
+      var high = ag.reduce(function (a, b) { return b.r.avg > a.r.avg ? b : a; });
+      if (low.r.avg < high.r.avg) out.push(["Least agreement: ", "“" + low.q.text + "” (" + fmt(low.r.avg) + " out of 5)."]);
+    }
+    var nc = (s.overall_comments || []).length;
+    COMMENTS.forEach(function (c) { nc += ((s.comments || {})[c.id] || []).length; });
+    SESSIONS.forEach(function (x) { nc += ((s.sessions || {})[x.id] && s.sessions[x.id].comments || []).length; });
+    out.push(["Comments: ", nc + " written comment" + (nc === 1 ? "" : "s") + " across all questions."]);
+    return out;
+  }
+
+  function metaText(s) {
+    var when = s && s.fetched_at ? new Date(s.fetched_at) : null;
+    var whenTxt = liveSummary ? "checked just now" : (when && !isNaN(when) ? "updated " + when.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "not updated yet");
+    return s.count + " response" + (s.count === 1 ? "" : "s") + " · " + whenTxt + " in this browser";
+  }
+  function statCard(id, value, label, citeKey) {
+    var l = el("div", { class: "l" }, [document.createTextNode(label), citeKey ? cite(citeKey) : null]);
+    var card = el("div", { class: "stat" }, [el("div", { class: "n", text: value }), l]);
+    card.dataset.gleanId = "stat-" + id;
+    return card;
+  }
+  function barRow(id, titleNode, sc, extra) {
+    var ok = sc && sc.avg !== null;
+    var row = el("div", { class: "bar-row" }); row.dataset.gleanId = "result-" + id;
+    var bar = el("div", { class: "bar", role: "img", "aria-label": ok ? "Average " + fmt(sc.avg) + " of 5" : (MIN_N > 1 ? "Hidden, fewer than " + MIN_N + " ratings" : "No ratings yet") });
+    var fill = el("i"); fill.style.width = ok ? (sc.avg / 5 * 100) + "%" : "0%"; bar.appendChild(fill);
+    row.appendChild(titleNode); row.appendChild(bar); row.appendChild(el("div", { class: "avg", text: ok ? fmt(sc.avg) : "–" }));
+    var n = sc ? sc.n : 0;
+    var sub = ok ? n + " rated" : (MIN_N > 1 ? "Fewer than " + MIN_N + " ratings, hidden for anonymity" : "No ratings yet");
+    if (extra) sub += " · " + extra;
+    row.appendChild(el("div", { class: "sub", text: sub }));
+    return row;
+  }
+  function commentList(host, items) { (items || []).forEach(function (t) { host.appendChild(el("div", { class: "comment", text: t })); }); }
+
+  function renderResultsWaiting(host, s) {
+    var w = el("section", { class: "waiting" }); w.dataset.gleanId = "results-waiting";
+    w.appendChild(el("h3", { text: "Waiting for responses" }));
+    w.appendChild(el("div", { class: "big", text: s.count + " of " + MIN_N }));
+    var pr = el("div", { class: "progress", role: "img", "aria-label": s.count + " of " + MIN_N + " responses needed" });
+    var fill = el("i"); fill.style.width = Math.min(100, s.count / MIN_N * 100) + "%"; pr.appendChild(fill); w.appendChild(pr);
+    w.appendChild(el("p", { text: MIN_N > 1 ? "The summary appears once at least " + MIN_N + " people respond, so no one’s answers can be singled out. Responses are stored only in this browser." : "No responses yet. The summary appears here as soon as the first person submits." }));
+    w.appendChild(el("p", { class: "q-label", text: "What the summary will show" }));
+    var ul = el("ul");
+    ["Response count, overall rating and logistics rating",
+     "Key takeaways, including the highest and lowest rated sessions",
+     "Ratings for all " + SESSIONS.length + " sessions, grouped by day",
+     "Pacing, topic mix and the overall questions",
+     "Anonymous comments for each question"].forEach(function (t) { ul.appendChild(el("li", { text: t })); });
+    w.appendChild(ul);
+    host.appendChild(w);
+  }
+  function renderResultsSummary(host, s) {
+    var box = el("section", { class: "summary" }); box.dataset.gleanId = "results-summary";
+    box.appendChild(el("h3", {}, [document.createTextNode("Summary"), cite("response_summary")]));
+    var stats = el("div", { class: "stat-row" });
+    stats.appendChild(statCard("count", String(s.count), "responses", "folder_responses"));
+    stats.appendChild(statCard("overall", s.overall && s.overall.avg !== null ? fmt(s.overall.avg) : "–", "overall rating, out of 5", "response_summary"));
+    stats.appendChild(statCard("top2", s.overall ? pct(s.overall.top2) : "–", "rated the QBR 4 or 5", "response_summary"));
+    stats.appendChild(statCard("logistics", s.logistics && s.logistics.avg !== null ? fmt(s.logistics.avg) : "–", s.logistics && s.logistics.avg !== null ? "logistics, out of 5" : (MIN_N > 1 ? "logistics, hidden until " + MIN_N + " ratings" : "logistics, no ratings yet"), "response_summary"));
+    box.appendChild(stats);
+    var ul = el("ul", { class: "takeaways" });
+    takeaways(s).forEach(function (t) { ul.appendChild(el("li", {}, [el("b", { text: t[0] }), document.createTextNode(t[1])])); });
+    box.appendChild(ul);
+    host.appendChild(box);
+  }
+  function renderResultsSessions(host, s) {
+    host.appendChild(el("h3", {}, [document.createTextNode("Session ratings"), cite("session_ratings")]));
+    DAYS.forEach(function (day, i) {
+      var g = el("div", { class: "day-group" }); g.dataset.gleanId = "results-day-" + (i + 1);
+      g.appendChild(el("div", { class: "day-head" }, [el("span", { class: "day-name", text: day.name }), el("span", { class: "day-title", text: day.title })]));
+      SESSIONS.filter(function (x) { return x.day === i; }).forEach(function (x) {
+        var sc = s.sessions[x.id] || { n: 0, avg: null, na: 0, comments: [] };
+        var t = el("div", { class: "t" }, [document.createTextNode(x.title), el("div", { class: "o", text: x.owners })]);
+        var row = barRow(x.id, t, sc, (sc.na || 0) + " didn’t attend");
+        if (sc.comments && sc.comments.length) {
+          var det = el("details", { class: "sess-comments" }, [el("summary", { text: sc.comments.length + " comment" + (sc.comments.length === 1 ? "" : "s") })]);
+          commentList(det, sc.comments);
+          row.appendChild(det);
+        }
+        g.appendChild(row);
+      });
+      host.appendChild(g);
+    });
+  }
+  function distRow(id, label, c) {
+    var row = el("div", { class: "dist-row" }); row.dataset.gleanId = "result-" + id;
+    row.appendChild(el("div", { class: "t", text: label }));
+    if (!c || !c.counts) { row.appendChild(el("div", { class: "o", text: MIN_N > 1 ? "Fewer than " + MIN_N + " answers, hidden for anonymity" : "No answers yet" })); return row; }
+    var bar = el("div", { class: "dist", role: "img", "aria-label": CHOICES[id].map(function (k) { return k + " " + (c.counts[k] || 0); }).join(", ") });
+    var legend = el("div", { class: "dist-legend" });
+    CHOICES[id].forEach(function (k, j) {
+      var v = c.counts[k] || 0;
+      if (v) { var seg = el("i", { class: "s" + j }); seg.style.width = (v / c.n * 100) + "%"; bar.appendChild(seg); }
+      legend.appendChild(el("span", { class: "s" + j, text: k + ": " + v }));
+    });
+    row.appendChild(bar); row.appendChild(legend);
+    return row;
+  }
+  function renderResultsOverall(host, s) {
+    host.appendChild(el("h3", {}, [document.createTextNode("Overall questions"), cite("overall_questions")]));
+    AGREE.forEach(function (q) { host.appendChild(barRow(q.id, el("div", { class: "t", text: q.text }), s.agree[q.id])); });
+    host.appendChild(distRow("pacing", "Pacing and length of each day", s.pacing));
+    host.appendChild(distRow("mix", "Mix of topics", s.mix));
+  }
+  function renderResultsComments(host, s) {
+    host.appendChild(el("h3", {}, [document.createTextNode("Comments"), cite("comments_anonymized")]));
+    var blocks = [["overall-comment", "Comments on the QBR overall", s.overall_comments || []]]
+      .concat(COMMENTS.map(function (c) { return [c.id, c.text, (s.comments || {})[c.id] || []]; }));
+    blocks.forEach(function (b) {
+      var blk = el("div", { class: "c-block" }); blk.dataset.gleanId = "comments-" + b[0];
+      blk.appendChild(el("p", { class: "q-label", text: b[1] + " (" + b[2].length + ")" }));
+      if (b[2].length) commentList(blk, b[2]); else blk.appendChild(el("p", { class: "c-empty", text: "No comments." }));
+      host.appendChild(blk);
+    });
+  }
+  function renderResults() {
+    var host = $("resultsView"); host.textContent = "";
+    var s = liveSummary || SNAPSHOT || { count: 0, min_n: MIN_N };
+    var head = el("div", { class: "res-head" });
+    head.appendChild(el("div", {}, [el("h2", { class: "step-title", text: "Results" }), el("p", { class: "res-meta", text: metaText(s) })]));
+    var actions = el("div", { class: "tools res-actions" });
+    var check = el("button", { type: "button", class: "btn", text: liveState === "loading" ? "Checking…" : "Refresh local results" });
+    if (liveState === "loading") check.disabled = true;
+    check.addEventListener("click", function () { liveManual = true; checkLive(); });
+    actions.appendChild(check);
+    head.appendChild(actions);
+    host.appendChild(head);
+    if (liveState === "failed" && liveManual) host.appendChild(el("p", { class: "tool-note", text: "Couldn’t read the locally saved responses. Showing the last available results." }));
+
+    if (s.count < MIN_N || !s.sessions) { renderResultsWaiting(host, s); return; }
+    renderResultsSummary(host, s);
+    renderResultsSessions(host, s);
+    renderResultsOverall(host, s);
+    renderResultsComments(host, s);
+    host.appendChild(el("p", { class: "tool-note anon-note", text: "Results are anonymous: no names or response IDs are shown and comments are shuffled within each section" + (MIN_N > 1 ? ", ratings with fewer than " + MIN_N + " answers are hidden," : ".") + " If someone submitted more than once, only their latest response counts." }));
+  }
+  async function checkLive() {
+    if (liveState === "loading") return;
+    liveState = "loading"; liveTried = true; renderResults();
+    try {
+      var docs = latestPerResponse(await readAllRows());
+      liveSummary = summarize(docs); liveState = "ok";
+    } catch (e) {
+      console.warn("[QBR survey] live results check failed", e);
+      liveState = "failed";
+    }
+    if (view === "results") renderResults();
+  }
+  function openResults() {
+    renderResults();
+    if (!liveTried) checkLive();
+  }
+
+  /* ---------- init ---------- */
+  $("backBtn").addEventListener("click", function () { if (step > 0) goTo(step - 1); });
+  $("nextBtn").addEventListener("click", function () { if (step < STEPS.length - 1) goTo(step + 1); else submit(); });
+  $("editBtn").addEventListener("click", function () { show("survey"); goTo(0); });
+  $("newBtn").addEventListener("click", resetForNew);
+  $("viewToggle").addEventListener("click", function () { show(view === "results" ? "survey" : "results"); });
+  function setGuide(open) { $("guide").hidden = !open; $("guideBtn").setAttribute("aria-expanded", open ? "true" : "false"); }
+  $("guideBtn").addEventListener("click", function () { setGuide($("guide").hidden); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") setGuide(false); });
+
+  (function restore() {
+    try {
+      ["fy27q3-ts-qbr-responses", "fy27q3-ts-qbr-my-response", "fy27q3-ts-qbr-pasted-results"].forEach(function (k) { localStorage.removeItem(k); });
+    } catch (e) {}
+    var d = loadMine();
+    if (d && d.id) {
+      editingId = d.id;
+      var saved = readStoredResponses().find(function (response) { return response.id === d.id; });
+      if (saved) {
+        state = {
+          ratings: saved.ratings || {},
+          sessionComments: saved.sessionComments || {},
+          overallComment: saved.overallComment || "",
+          overall: saved.overall || "",
+          agree: saved.agree || {},
+          pacing: saved.pacing || "",
+          mix: saved.mix || "",
+          logistics: saved.logistics || "",
+          comments: saved.comments || {}
+        };
+      }
+      saveMine({ id: d.id });
+      showBanner("A response was already submitted from this device. Submitting again replaces it. Use “Start a new response” on the thank you screen if you’re a different person.");
+    }
+    renderStep(false);
+  })();
+})();
+
+</script>
+<script>
+  (function () {
+    if (!window.GleanBridge) return;
+    window.GleanBridge.postMessage({ actionId: 'export-pdf', type: 'glean-add-menu', metadata: { label: 'Export as PDF', icon: 'export' } });
+    window.GleanBridge.onMessage('action', function (data) { if (data.actionId === 'export-pdf') window.print(); });
+  })();
+</script>
+</body>
+</html>
